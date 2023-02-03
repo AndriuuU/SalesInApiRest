@@ -23,9 +23,12 @@ Route::post('login', 'API\RegisterController@login');
 
 Route::middleware('auth:api')->group( function () {
 	Route::resource('offers', 'API\OffersController');
+	Route::get('/ofertas', 'API\OffersController@index')->name('offers.index');
 });
 
 Route::middleware('auth:api')->group( function () {
 	Route::resource('articles', 'API\articlesController');
+	Route::resource('/noticias', 'API\ArticlesController');
+	Route::get('/noticias', 'API\ArticlesController@index')->name('articles.index');
+	Route::get('/noticias', 'API\ArticlesController@index');
 });
-

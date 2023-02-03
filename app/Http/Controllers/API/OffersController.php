@@ -4,6 +4,9 @@ namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\View;
+
 
 class OffersController extends Controller
 {
@@ -47,9 +50,12 @@ class OffersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show()
     {
-        //
+        $response = Http::get('https://api.example.com/data');
+        $offers = $response->json();
+        return View::make('offers', compact('offers'));
+
     }
 
     /**
