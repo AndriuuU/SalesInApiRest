@@ -69,11 +69,11 @@ class OffersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show()
+    public function show($id)
     {
-        $response = Http::get('https://api.example.com/data');
-        $offers = $response->json();
-        return View::make('offers', compact('offers'));
+        // $response = Http::get('https://api.example.com/data');
+        // $offers = $response->json();
+        // return View::make('offers', compact('offers'));
 
     }
 
