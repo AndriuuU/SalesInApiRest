@@ -28,6 +28,7 @@
 
         <table class="table table-bordered">
             <tr>
+                <th>Id</th>
                 <th>Titulo</th>
                 <th>Descripcion</th>
                 <th>Imagen</th>
@@ -36,18 +37,11 @@
             @forelse ($articles as $article)
             @if($article-> deleted==0)
             <tr>
+                <td>{{ $article->id  }}</td>
                 <td>{{ $article->title  }}</td>
                 <td>{{ $article->description }} </td>
                 <td><img src="{{ asset('images/'.$article->image) }}" width=150px height=150px></td>
-                <td>{{ $article->cicle }}</td>
-                <!-- <td>
-                    <form action="{{route('articles.delete', [$article->id])}}" method="POST">                                        
-                        <a class="btn btn-primary" href="{{route('articles.edit', [$article->id])}}"><i class="fa fa-pencil"></i></a>
-                        @csrf
-                        <button type="submit" class="btn btn-danger" ><span class="fa fa-remove"></span></button>    
-                    </form>
-                </td> -->
-
+                <td>{{ $article->cicle_id }}</td>
             </tr>
             @endif
     </body>
