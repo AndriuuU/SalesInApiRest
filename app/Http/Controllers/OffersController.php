@@ -4,8 +4,13 @@ namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Offers;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\View;
+use Validator;
 
-class ArticlesController extends Controller
+
+class OffersController extends Controller
 {
     public $successStatus = 200;
     /**
@@ -15,7 +20,9 @@ class ArticlesController extends Controller
      */
     public function index()
     {
-        //
+        $offers= Offers::all();
+
+        return response()->json(['Ofertas' => $offers->toArray()], $this->successStatus);
     }
 
     /**
@@ -36,7 +43,24 @@ class ArticlesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'title' => 'required',
+            'description' => 'required',
+            'date_max' => 'required',
+            'num_candidates' => 'required',
+            'cicle_id' => 'required'
+        ]);
+    
+        $offer = new Offers();
+        $offer->name = $validatedData['title'];
+        $offer->email = $validatedData['description'];
+        $offer->email = $validatedData['date_max'];
+        $offer->email = $validatedData['num_candidates'];
+        $offer->email = $validatedData['cicle_id'];
+        $offer->save();
+    
+        return redirect()->route('offers.index');
+
     }
 
     /**
@@ -45,9 +69,12 @@ class ArticlesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show()
     {
-        //
+        $response = Http::get('https://api.example.com/data');
+        $offers = $response->json();
+        return View::make('offers', compact('offers'));
+
     }
 
     /**
