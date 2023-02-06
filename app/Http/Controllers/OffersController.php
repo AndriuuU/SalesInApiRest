@@ -1,113 +1,128 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use Illuminate\Support\Str;
+use App\Cicles;
 use App\Offers;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\View;
-use Validator;
-
+use App\Applied;
+use WithFileUploads;
+use Barryvdh\DomPDF\Facade as PDF;
+use Illuminate\Support\Facades\Mail;
 
 class OffersController extends Controller
 {
-    public $successStatus = 200;
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $offers= Offers::all();
-
-        return response()->json(['Ofertas' => $offers->toArray()], $this->successStatus);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'date_max' => 'required',
-            'num_candidates' => 'required',
-            'cicle_id' => 'required'
-        ]);
     
-        $offer = new Offers();
-        $offer->name = $validatedData['title'];
-        $offer->email = $validatedData['description'];
-        $offer->email = $validatedData['date_max'];
-        $offer->email = $validatedData['num_candidates'];
-        $offer->email = $validatedData['cicle_id'];
-        $offer->save();
+
+    public function index(Request $request){
+
+        $userId = auth()->id();
+        $offers = Offers::select('offers.id', 'offers.title', 'offers.description', 'offers.num_candidates','offers.cicle_id', 'offers.created_at', 'offers.updated_at', 'offers.deleted', 'applieds.offer_id', 'applieds.user_id')
+                ->leftJoin('applieds', function($join) use ($userId) {
+                 $join->on('offers.id', '=', 'applieds.offer_id')
+                      ->where('applieds.user_id', '=', $userId);
+              })
+              ->whereNull('applieds.id')
+              ->where('offers.deleted', 0)
+              ->get();
+        $cicles=cicles::all();
+		
+		$applies=Applied::where('user_id','!=',auth()->id())->with(['offer'])->paginate(10);
+		return view('offers.index', compact('offers','cicles'));
+
+	}
+
+    // public function show($id)
+    // {
+    //     $offers = Offers::find($id);
+    //     return view('offers.show', ['offers' => $offers]);
+    // }
     
-        return redirect()->route('offers.index');
+    // public function download(Request $request)
+    // {
+    //     $email = $request->input('email');
+    //     $data = [
+    //         'titulo' => 'Styde.net'
+    //     ];
 
-    }
+    //     $pdf = PDF::loadView('pdf', $data);
+        
+    //     Mail::send('emails.pdf', [], function ($m) use ($email, $pdf) {
+    //         $m->to($email)->subject('Your PDF');
+    //         $m->attachData($pdf->output(), "archivo.pdf", [
+    //             'mime' => 'application/pdf',
+    //         ]);
+    //     });
+    // }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show()
-    {
-        $response = Http::get('https://api.example.com/data');
-        $offers = $response->json();
-        return View::make('offers', compact('offers'));
+    public function download()
+	{
+		$data = [
+			'titulo' => 'Styde.net'
+		];
+		
+		return PDF::loadView('pdf', $data)
+			->stream('archivo.pdf');
+        return redirect()->route('offers.index')->with('message','Oferta guardada con exito');
+	}
 
-    }
+    public function aplicar(Request $request,Offers $offer){
+        $user = $request->user();
+		$oferta = Offers::find($offer->id);
+        //$applied = Applied::all();
+		
+		
+        $appliednew = new Applied; 
+        $appliednew->offer_id = $oferta->id;
+        $appliednew->user_id = $user->id;
+        
+		$appliednew->save();
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
+		$oferta->num_candidates=1+$oferta->num_candidates;
+		$oferta->save();
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
+        // $userId = auth()->id();
+        // $offers = Offers::select('offers.id', 'offers.title', 'offers.description', 'offers.num_candidates', 'offers.created_at', 'offers.updated_at', 'offers.deleted', 'applieds.offer_id', 'applieds.user_id')
+        //         ->leftJoin('applieds', function($join) use ($userId) {
+        //          $join->on('offers.id', '=', 'applieds.offer_id')
+        //               ->where('applieds.user_id', '=', $userId);
+        //       })
+        //       ->whereNull('applieds.id')
+        //       ->where('offers.deleted', 0)
+        //       ->get();
+              
+        
+        // $cicles=cicles::all();
+
+
+        // if($applied->offer_id == $id && $applied->user_id == $user){
+
+			
+				return redirect()->route('offers.index')->with('message', 'FELICIDADES! Oferta aplicada correctamente');
+				
+			
+				return redirect()->route('offers.index')->with('messageError', 'ERROR!!! Oferta no aplicada');
+			
+		
+			$user->actived = 0;
+			$offer->deleted = 1;
+			$offer->update();
+			return redirect()->route('offers.index');
+	}
+
+        
+		// return view('offers.index', compact('offers','cicles'));
+
+	
+
+    public function show(Request $request,Offers $offer) {
+        $user = $request->user();
+        $offers=Offers::find($offer->id);
+        $cicles=cicles::all();
+		
+		return view('offers.show', compact('offers','cicles'));
+
+	}
 }
