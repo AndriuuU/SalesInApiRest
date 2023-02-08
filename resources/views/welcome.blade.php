@@ -85,10 +85,10 @@
                 </div>
                 
                 <div class="links">
-                    <a href="{{ url('/ofertas/show') }}">Ofertas</a>
+                    <a href="{{ route('offers.index') }}">Ofertas</a>
                 </div>
                 <div class="links">
-                    <a href="{{ url('/noticias/show') }}">Noticias</a>
+                    <a href="{{ route('articles.index') }}">Noticias</a>
                 </div>
                  
             </div>

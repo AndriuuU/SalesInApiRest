@@ -28,8 +28,8 @@ class ArticlesController extends Controller
         ]);
     
 
-        if($validator->fails()){
-            return response()->json(['Success'=>False,'error' => $validator->errors()], 401);       
+        if(is_null($validatedData)){
+            return response()->json(['error' => $validatedData->errors()], 401);       
         }
 
         $article = Articles::create($input);
@@ -57,8 +57,8 @@ class ArticlesController extends Controller
             'cicle_id' => 'required'
         ]);
 
-        if($validator->fails()){
-            return response()->json(['Success'=>False,'error' => $validator->errors()], 401);       
+        if(is_null($validatedData)){
+            return response()->json(['Success'=>False,'error' => $validatedData->errors()], 401);       
         }
 
         $article->title = $input['title'];

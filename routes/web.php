@@ -23,6 +23,6 @@ Route::get('/', function () {
 Auth::routes();
 
 
-Route::get('ofertas/show','OffersController@index')->name('offers.index');
+Route::get('offers/show','OffersController@index')->name('offers.index');
 
-Route::get('noticias/show','ArticlesController@index')->name('articles.index');
+Route::get('articles/show','ArticlesController@index')->name('articles.index');

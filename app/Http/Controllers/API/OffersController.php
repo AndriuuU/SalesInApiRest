@@ -17,7 +17,7 @@ class OffersController extends Controller
     public function index() {
         $offers = Offers::all();
 
-        return response()->json(['Success'=>"True",'Ofertas' => $offers->toArray()], $this->successStatus);
+        return response()->json(['Success'=>True,'Ofertas' => $offers->toArray()], $this->successStatus);
     }
 
     public function store(Request $request) {
@@ -32,29 +32,29 @@ class OffersController extends Controller
         ]);
     
 
-        if($validator->fails()){
-            return response()->json(['Success'=>"False",'error' => $validator->errors()], 401);       
+        if(is_null($validatedData)){
+            return response()->json(['Success'=>False,'error' => $validatedData->errors()], 401);       
         }
 
         $offer = Offers::create($input);
 
-        return response()->json(['Success'=>"True",'Ofertas' => $offer->toArray()], $this->successStatus);
+        return response()->json(['Success'=>True,'Ofertas' => $offer->toArray()], $this->successStatus);
     }
 
     public function show($id) {
         $offer = Offers::find($id);
 
         if (is_null($offer)) {
-            return response()->json(['Success'=>"False",'error' => $validator->errors()], 401);
+            return response()->json(['Success'=>False,'error' => $validator->errors()], 401);
         }
 
-        return response()->json(['Success'=>"True",'Ofertas' => $offer->toArray()], $this->successStatus);
+        return response()->json(['Success'=>True,'Ofertas' => $offer->toArray()], $this->successStatus);
     }
 
     public function update(Request $request, Offers $offer) {
         $input = $request->all();
 
-        $validator = Validator::make($input, [
+        $validatedData = Validator::make($input, [
             'title' => 'required',
             'description' => 'required',
             'date_max' => 'required',
@@ -62,8 +62,8 @@ class OffersController extends Controller
             'cicle_id' => 'required'
         ]);
 
-        if($validator->fails()){
-            return response()->json(['Success'=>"False",'error' => $validator->errors()], 401);       
+        if(is_null($validatedData)){
+            return response()->json(['Success'=>False,'error' => $validatedData->errors()], 401);       
         }
 
         $offer->title = $input['title'];
@@ -73,12 +73,12 @@ class OffersController extends Controller
         $offer->cicle_id = $input['cicle_id'];
         $offer->save();
 
-        return response()->json(['Success'=>"True",'Ofertas' => $offer->toArray()], $this->successStatus);
+        return response()->json(['Success'=>True,'Ofertas' => $offer->toArray() ], $this->successStatus);
     }
 
     public function destroy(Offers $offer) {
         $offer->delete();
 
-        return response()->json(['Success'=>"True",'Ofertas' => $offer->toArray()], $this->successStatus);
+        return response()->json(['Success'=>True,'Ofertas' => $offer->toArray()], $this->successStatus);
     }
 }
