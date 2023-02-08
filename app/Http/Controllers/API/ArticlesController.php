@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 use App\Articles;
+use App\Cicles;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -10,9 +11,10 @@ class ArticlesController extends Controller
     public $successStatus = 200;
 
     public function index() {
+        
         $articles = Articles::all();
 
-        return response()->json(['Articulos' => $articles->toArray()], $this->successStatus);
+        return response()->json(['Success'=>True,'Articulos' => $articles->toArray()]);
     }
 
     public function store(Request $request) {
@@ -20,28 +22,29 @@ class ArticlesController extends Controller
 
         $validatedData = $request->validate([
             'title' => 'required',
+            'image' => 'required',
             'description' => 'required',
             'cicle_id' => 'required',
         ]);
     
 
         if($validator->fails()){
-            return response()->json(['error' => $validator->errors()], 401);       
+            return response()->json(['Success'=>False,'error' => $validator->errors()], 401);       
         }
 
         $article = Articles::create($input);
 
-        return response()->json(['Articulos' => $article->toArray()], $this->successStatus);
+        return response()->json(['Success'=>True,'Articulos' => $article->toArray()], $this->successStatus);
     }
 
     public function show($id) {
-        $article = Articles::find($id);
+        $article = articles::find($id);
 
         if (is_null($article)) {
-            return response()->json(['error' => $validator->errors()], 401);
+            return response()->json(['Success'=>False,'error' => $validator->errors()], 401);
         }
 
-        return response()->json(['Articulos' => $article->toArray()], $this->successStatus);
+        return response()->json(['Success'=>True,'Articulos' => $article->toArray()], $this->successStatus);
     }
 
     public function update(Request $request, Articles $article) {
@@ -49,25 +52,27 @@ class ArticlesController extends Controller
 
         $validatedData = $request->validate([
             'title' => 'required',
+            'image' => 'required',
             'description' => 'required',
             'cicle_id' => 'required'
         ]);
 
         if($validator->fails()){
-            return response()->json(['error' => $validator->errors()], 401);       
+            return response()->json(['Success'=>False,'error' => $validator->errors()], 401);       
         }
 
         $article->title = $input['title'];
+        $article->image = $input['image'];
         $article->description = $input['description'];
         $article->cicle_id = $input['cicle_id'];
         $article->save();
 
-        return response()->json(['Articulos' => $article->toArray()], $this->successStatus);
+        return response()->json(['Success'=>True,'Articulos' => $article->toArray()], $this->successStatus);
     }
 
     public function destroy(Articles $article) {
         $article->delete();
 
-        return response()->json(['Articulos' => $article->toArray()], $this->successStatus);
+        return response()->json(['Success'=>True,'Articulos' => $article->toArray()], $this->successStatus);
     }
 }

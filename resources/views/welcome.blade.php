@@ -83,14 +83,14 @@
                 <div class="title m-b-md">
                     Bienvenido
                 </div>
-                @auth
+                
                 <div class="links">
-                    <a href="{{ url('/ofertas') }}">Ofertas</a>
+                    <a href="{{ url('/ofertas/show') }}">Ofertas</a>
                 </div>
                 <div class="links">
-                    <a href="{{ url('/noticias') }}">Noticias</a>
+                    <a href="{{ url('/noticias/show') }}">Noticias</a>
                 </div>
-                @endauth 
+                 
             </div>
         </div>
     </body>

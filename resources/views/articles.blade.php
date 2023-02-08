@@ -1,18 +1,5 @@
-<!DOCTYPE html>
-
-<html>
-
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Articles</title>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/css/bootstrap.css" 
-        rel="stylesheet">
-        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" 
-        rel="stylesheet"/>
-    </head>
-        
-    <body> 
+@extends('layout') 
+@section('content')
         <br>
             <div class="row">
                 <div class="col-lg-12 margin-tb">
@@ -25,7 +12,8 @@
         <div class="title m-b-md">
                     Noticias
         </div>
-
+        
+        <div>
         <table class="table table-bordered">
             <tr>
                 <th>Id</th>
@@ -34,7 +22,7 @@
                 <th>Imagen</th>
                 <th>Ciclo</th>
             </tr>
-            @forelse ($articles as $article)
+            @foreach ($articles as $article)
             @if($article-> deleted==0)
             <tr>
                 <td>{{ $article->id  }}</td>
@@ -44,5 +32,11 @@
                 <td>{{ $article->cicle_id }}</td>
             </tr>
             @endif
-    </body>
-</html>
+            @endforeach
+        </table>
+
+
+    <div class="card-footer mr-auto">
+        {{$articles->links()}}
+    </div>
+@endsection

@@ -17,7 +17,7 @@ class OffersController extends Controller
     public function index() {
         $offers = Offers::all();
 
-        return response()->json(['Ofertas' => $offers->toArray()], $this->successStatus);
+        return response()->json(['Success'=>"True",'Ofertas' => $offers->toArray()], $this->successStatus);
     }
 
     public function store(Request $request) {
@@ -33,46 +33,52 @@ class OffersController extends Controller
     
 
         if($validator->fails()){
-            return response()->json(['error' => $validator->errors()], 401);       
+            return response()->json(['Success'=>"False",'error' => $validator->errors()], 401);       
         }
 
         $offer = Offers::create($input);
 
-        return response()->json(['Ofertas' => $offer->toArray()], $this->successStatus);
+        return response()->json(['Success'=>"True",'Ofertas' => $offer->toArray()], $this->successStatus);
     }
 
     public function show($id) {
         $offer = Offers::find($id);
 
         if (is_null($offer)) {
-            return response()->json(['error' => $validator->errors()], 401);
+            return response()->json(['Success'=>"False",'error' => $validator->errors()], 401);
         }
 
-        return response()->json(['Ofertas' => $offer->toArray()], $this->successStatus);
+        return response()->json(['Success'=>"True",'Ofertas' => $offer->toArray()], $this->successStatus);
     }
 
     public function update(Request $request, Offers $offer) {
         $input = $request->all();
 
         $validator = Validator::make($input, [
-            'name' => 'required',
-            'detail' => 'required'
+            'title' => 'required',
+            'description' => 'required',
+            'date_max' => 'required',
+            'num_candidates' => 'required',
+            'cicle_id' => 'required'
         ]);
 
         if($validator->fails()){
-            return response()->json(['error' => $validator->errors()], 401);       
+            return response()->json(['Success'=>"False",'error' => $validator->errors()], 401);       
         }
 
-        $offer->name = $input['name'];
-        $offer->detail = $input['detail'];
+        $offer->title = $input['title'];
+        $offer->description = $input['description'];
+        $offer->date_max = $input['date_max'];
+        $offer->num_candidates = $input['num_candidates'];
+        $offer->cicle_id = $input['cicle_id'];
         $offer->save();
 
-        return response()->json(['Ofertas' => $offer->toArray()], $this->successStatus);
+        return response()->json(['Success'=>"True",'Ofertas' => $offer->toArray()], $this->successStatus);
     }
 
     public function destroy(Offers $offer) {
         $offer->delete();
 
-        return response()->json(['Ofertas' => $offer->toArray()], $this->successStatus);
+        return response()->json(['Success'=>"True",'Ofertas' => $offer->toArray()], $this->successStatus);
     }
 }

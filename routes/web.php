@@ -13,8 +13,16 @@
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('index');
 
 // Route::resource('offers', 'API\OffersController');
 // Route::resource('articles', 'API\articlesController');
 
+
+
+Auth::routes();
+
+
+Route::get('ofertas/show','OffersController@index')->name('offers.index');
+
+Route::get('noticias/show','ArticlesController@index')->name('articles.index');
